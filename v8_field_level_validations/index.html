@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <form id="contactForm">
+            <h2>Contact Us</h2>
+            <div class="form-group">
+                <label for="firstName">First Name*</label>
+                <input type="text" id="firstName" name="firstName" required minlength="2" maxlength="50" pattern="[A-Za-z\s]+" title="Only letters are allowed">
+            </div>
+            <div class="form-group">
+                <label for="lastName">Last Name*</label>
+                <input type="text" id="lastName" name="lastName" required minlength="2" maxlength="50" pattern="[A-Za-z\s]+" title="Only letters are allowed">
+            </div>
+            <div class="form-group">
+                <label for="email">Email*</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number*</label>
+                <input type="text" id="phone" name="phone" required pattern="^\+?[1-9]\d{1,14}$" title="Please enter a valid phone number">
+            </div>
+            <div class="form-group">
+                <label for="dob">Date of Birth*</label>
+                <input type="date" id="dob" name="dob" required>
+            </div>
+            <div class="form-group">
+                <label for="about">About Myself</label>
+                <textarea id="about" name="about" maxlength="500"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="city">City*</label>
+                <input type="text" id="city" name="city" required minlength="2" maxlength="100">
+            </div>
+            <div class="form-group">
+                <label for="country">Country*</label>
+                <select id="country" name="country" required>
+                    <option value="">Select your Country</option>
+                    <!-- List of countries here -->
+                    <option value="USA">United States</option>
+                    <option value="CAN">Canada</option>
+                    <option value="GBR">United Kingdom</option>
+                    <!-- Add other countries as needed -->
+                </select>
+            </div>
+            <button type="submit" id="submitBtn" disabled>Submit</button>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
