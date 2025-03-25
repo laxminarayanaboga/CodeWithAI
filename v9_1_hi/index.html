@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Contact Form</title>
+</head>
+<body>
+    <div class="container">
+        <form id="contactForm" novalidate>
+            <h2>Contact Us</h2>
+            <div class="form-group">
+                <label for="firstName">First Name *</label>
+                <input type="text" id="firstName" name="firstName" required pattern="^[A-Za-z]{2,50}$" />
+                <div class="error-message" id="firstNameError"></div>
+            </div>
+            <div class="form-group">
+                <label for="lastName">Last Name *</label>
+                <input type="text" id="lastName" name="lastName" required pattern="^[A-Za-z]{2,50}$" />
+                <div class="error-message" id="lastNameError"></div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" required />
+                <div class="error-message" id="emailError"></div>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number *</label>
+                <input type="tel" id="phone" name="phone" required pattern="^\+?[0-9\s]+$" />
+                <div class="error-message" id="phoneError"></div>
+            </div>
+            <div class="form-group">
+                <label for="dob">Date of Birth *</label>
+                <input type="date" id="dob" name="dob" required />
+                <div class="error-message" id="dobError"></div>
+            </div>
+            <div class="form-group">
+                <label for="aboutMyself">About Myself</label>
+                <textarea id="aboutMyself" name="aboutMyself" maxlength="500"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="city">City *</label>
+                <input type="text" id="city" name="city" required pattern="^[A-Za-z\s]{2,100}$" />
+                <div class="error-message" id="cityError"></div>
+            </div>
+            <div class="form-group">
+                <label for="country">Country *</label>
+                <select id="country" name="country" required>
+                    <option value="">Select a country</option>
+                    <!-- List of countries as options -->
+                    <script>
+                        const countries = [
+                            "United States", "Canada", "United Kingdom", "Australia", "Germany",
+                            // Add more countries as per your requirement
+                        ];
+                        countries.forEach(country => {
+                            document.write(`<option value="${country}">${country}</option>`);
+                        });
+                    </script>
+                </select>
+                <div class="error-message" id="countryError"></div>
+            </div>
+            <button type="submit" id="submitBtn" disabled>Submit</button>
+        </form>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
