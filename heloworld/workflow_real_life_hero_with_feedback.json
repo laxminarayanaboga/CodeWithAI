@@ -1,0 +1,400 @@
+{
+  "name": "workflow_real_life_hero with feedback",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "output": "fields",
+        "fields": [
+          "body",
+          "from",
+          "toRecipients",
+          "subject"
+        ],
+        "filters": {
+          "sender": "i.bogalaxmi@gmail.com"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlookTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -325
+      ],
+      "id": "6be7d323-e958-4347-9d3b-71bece658327",
+      "name": "Microsoft Outlook Trigger",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "7kfpOgWsjL2bGlzq",
+          "name": "Microsoft Outlook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.content }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an intelligent AI agent, professional yet kid-friendly, designed to read incoming emails from Outlook, identify real-life heroes, fetch their details, and respond with a beautifully formatted email. Follow these steps:\n\nStep 1: Identify the Real-Life Hero from the Email\nExtract the hero’s name from the email content. Example:\n\nEmail Input:\n\"I recently read about Dr. A.P.J. Abdul Kalam and his contributions to India’s space research. His work was truly inspiring!\"\n\nAgent Output:\nDr. A.P.J. Abdul Kalam\n\nStep 2: Fetch Hero’s Details\nOnce the hero is identified, gather the following information:\n\nBirth Details: Date and place of birth\n\nCareer Highlights: Key achievements and professional journey\n\nImportant Milestones: Notable awards, breakthroughs, or significant moments\n\nExample input:\n\"Provide details about Dr. A.P.J. Abdul Kalam, including birth details, career achievements, and major milestones.\"\n\nExample output:\n\nBirth Details:\n\nDate of Birth: October 15, 1931\n\nPlace of Birth: Rameswaram, India\n\nCareer Highlights:\n\nAerospace scientist and key contributor to India’s missile development\n\nServed as the 11th President of India from 2002 to 2007\n\nDeveloped India’s first indigenous Satellite Launch Vehicle (SLV-III)\n\nKnown as the \"Missile Man of India\" for his work in missile technology\n\nImportant Milestones:\n\nLed India’s Pokhran-II nuclear tests in 1998, strengthening national defense\n\nAuthored several inspiring books like Wings of Fire and Ignited Minds\n\nReceived the Bharat Ratna, India’s highest civilian award\n\nStep 3: Generate a Well-Formatted Email Response\nThe response should be formatted using proper HTML tags for professional email formatting. Use <b> for bold text, <p> for paragraphs, and <ul><li> for bullet points.\n\nExample Email Response:\n\n<p>Dear [Sender's Name],</p>  \n\n<p>Thank you for reaching out! Below are the details regarding <b>Narendra Modi</b>, a globally recognized leader and visionary.</p>  \n\n<b>Identified Hero:</b>  \n<p>Narendra Modi</p>  \n\n<b>Birth Details:</b>  \n<ul>  \n<li><b>Date of Birth:</b> September 17, 1950</li>  \n<li><b>Place of Birth:</b> Vadnagar, Mehsana district, Gujarat, India</li>  \n</ul>  \n\n<b>Career Highlights:</b>  \n<ul>  \n<li><b>Prime Minister of India:</b> First elected in May 2014; re-elected in 2019.</li>  \n<li><b>Economic Reforms:</b> Introduced Goods and Services Tax (GST) and launched Make in India to boost manufacturing.</li>  \n<li><b>Digital India Campaign:</b> Focused on improving digital infrastructure and online governance.</li>  \n</ul>  \n\n<b>Important Milestones:</b>  \n<ul>  \n<li>Led India’s successful COVID-19 vaccination drive, delivering over 2 billion doses.</li>  \n<li>Spearheaded global climate change initiatives like International Solar Alliance.</li>  \n<li>Introduced bold policy changes like Demonetization in 2016 to curb black money.</li>  \n</ul>  \n\n<p>Narendra Modi's leadership has transformed India on a global scale, making it a leader in digitalization, economy, and governance. His vision continues to inspire millions.</p>  \n\n<p>Wishing you a wonderful day!</p>  \n\n<p><b>Best regards,</b><br> Laxmi's Personal AI assistant</p>"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        252,
+        -325
+      ],
+      "id": "fbc0a088-0d51-4c29-bf14-72598037749e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1188,
+        -230
+      ],
+      "id": "3b737e36-5d1e-45e7-893f-18e186304882",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Fv2D2skfKVsJl11e",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        340,
+        -105
+      ],
+      "id": "f3dd73d1-67c3-4922-b870-6822cd1f0f43",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "eZaOxKhClmvab3UN",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toRecipients": "={{ $('Microsoft Outlook Trigger').item.json.from.emailAddress.address }}",
+        "subject": "={{ $('AI Agent').item.json.output.subject }}",
+        "bodyContent": "={{ $('Set Email').item.json.email }}",
+        "additionalFields": {
+          "bodyContentType": "html"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        1554,
+        -500
+      ],
+      "id": "6a0ff6a8-e0b1-42d7-80cc-b6aacabf97ed",
+      "name": "Microsoft Outlook",
+      "webhookId": "9fee3b49-9bac-4682-893f-6616387c02df",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "7kfpOgWsjL2bGlzq",
+          "name": "Microsoft Outlook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "1"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        220,
+        -105
+      ],
+      "id": "07a07172-048d-4806-9416-9cb79590b974",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n    \"type\": \"object\",\n    \"properties\": {\n        \"subject\": {\n            \"type\": \"string\",\n            \"description\": \"The subject line of the email\"\n        },\n        \"email\": {\n            \"type\": \"string\",\n            \"description\": \"The body content of the email\"\n        }\n    },\n    \"required\": [\n        \"subject\",\n        \"email\"\n    ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        460,
+        -105
+      ],
+      "id": "44314c37-f1b1-4961-99bc-11c190459e8e",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c0e8af75-b4aa-448f-99b1-4086f086ce06",
+              "name": "email",
+              "value": "={{ $json.output.email }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        660,
+        -325
+      ],
+      "id": "c64fab9f-6dfc-4e19-93cc-9e6f5812d1a9",
+      "name": "Set Email"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "toRecipients": "laxminarayanaboga4079@gmail.com",
+        "subject": "=APPROVAL REQUIRED FOR NEW MAIL: {{ $('AI Agent').item.json.output.subject }}",
+        "message": "=Please approve or decline the sending of this message generated.\n\nOriginal Query: {{ $('Microsoft Outlook Trigger').item.json.body.content }}\n\nAnswer generated by AI:\nSubject: {{ $('AI Agent').item.json.output.subject }}\n\nEmail: {{ $json.email }}",
+        "responseType": "freeText",
+        "options": {
+          "limitWaitTime": {
+            "values": {
+              "limitType": "atSpecifiedTime",
+              "maxDateAndTime": "2025-04-05T10:30:23"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        880,
+        -450
+      ],
+      "id": "ffa9e9fd-54d5-4229-b5e6-48254253ae59",
+      "name": "Get feedback",
+      "webhookId": "5b432b0d-7466-48ed-92f4-7c4bcc25a79b",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "7kfpOgWsjL2bGlzq",
+          "name": "Microsoft Outlook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.data.text }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Approved",
+              "description": "=The email has been reviewed and accepted as-is. The human explicitly or implicitly expresses approval, indicating that no changes are needed. \n\nExample phrases include:\n\n\"Looks good.\"\n\"Go ahead and send it.\"\n\"This works for me.\"\n\"Approved.\"\n\"No changes needed.\""
+            },
+            {
+              "category": "Declined",
+              "description": "=The email has been reviewed, but the human requests modifications before it is sent like tweaks, removing parts, rewording, etc. This could include suggested edits, rewording, or major revisions. \n\nExample phrases include:\n\n\"Can we tweek this part?\"\n\"Need some changes.\"\n\"I'd like to reword this.\"\n\"Not quite rigt-let's revise it.\"\n\"Can you adjust this before sending?\"\n\"Don't mention that we can't do that\""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        -450
+      ],
+      "id": "bb820e6d-3bb2-404b-bba0-744f242eb498",
+      "name": "Check Feedack"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Email: {{ $('Set Email').item.json.email }}\n\nFeedback from human: {{ $json.data.text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Overview\nYou are an expert email writer. Your job is to take an incoming email and revise it based on the feedback the human submitted. \n\n## Rules\nSign off emails as Laxmi's Personal AI assistant\nHere is the current date/time: {{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        1476,
+        -225
+      ],
+      "id": "1fbe7056-54bb-46bf-b937-005e1cb727c4",
+      "name": "Revision Agent"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Microsoft Outlook Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Revision Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Check Feedack",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Set Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          },
+          {
+            "node": "Revision Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Email": {
+      "main": [
+        [
+          {
+            "node": "Get feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get feedback": {
+      "main": [
+        [
+          {
+            "node": "Check Feedack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Feedack": {
+      "main": [
+        [
+          {
+            "node": "Microsoft Outlook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Revision Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Revision Agent": {
+      "main": [
+        [
+          {
+            "node": "Set Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f2deba90-1f58-4c43-8a5f-f26ca237b2e0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4dc3f44ee6fbed0d6e14191cc8513e1df46551dbe295f3af6da1c10ffa9d03ea"
+  },
+  "id": "3OlnmHQlRYHG9tK4",
+  "tags": []
+}
