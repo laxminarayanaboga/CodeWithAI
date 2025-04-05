@@ -1,0 +1,209 @@
+{
+  "name": "workflow_real_life_hero - working",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "output": "fields",
+        "fields": [
+          "body",
+          "from",
+          "toRecipients",
+          "subject"
+        ],
+        "filters": {
+          "sender": "i.bogalaxmi@gmail.com"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlookTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bfe61de4-29a1-41b6-adbb-22df2e34058f",
+      "name": "Microsoft Outlook Trigger",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "7kfpOgWsjL2bGlzq",
+          "name": "Microsoft Outlook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.content }}",
+        "options": {
+          "systemMessage": "=You are an intelligent AI agent, professional yet kid-friendly, designed to read incoming emails from Outlook, identify real-life heroes, fetch their details, and respond with a beautifully formatted email. Follow these steps:\n\nStep 1: Identify the Real-Life Hero from the Email\nExtract the hero’s name from the email content. Example:\n\nEmail Input:\n\"I recently read about Dr. A.P.J. Abdul Kalam and his contributions to India’s space research. His work was truly inspiring!\"\n\nAgent Output:\nDr. A.P.J. Abdul Kalam\n\nStep 2: Fetch Hero’s Details\nOnce the hero is identified, gather the following information:\n\nBirth Details: Date and place of birth\n\nCareer Highlights: Key achievements and professional journey\n\nImportant Milestones: Notable awards, breakthroughs, or significant moments\n\nExample input:\n\"Provide details about Dr. A.P.J. Abdul Kalam, including birth details, career achievements, and major milestones.\"\n\nExample output:\n\nBirth Details:\n\nDate of Birth: October 15, 1931\n\nPlace of Birth: Rameswaram, India\n\nCareer Highlights:\n\nAerospace scientist and key contributor to India’s missile development\n\nServed as the 11th President of India from 2002 to 2007\n\nDeveloped India’s first indigenous Satellite Launch Vehicle (SLV-III)\n\nKnown as the \"Missile Man of India\" for his work in missile technology\n\nImportant Milestones:\n\nLed India’s Pokhran-II nuclear tests in 1998, strengthening national defense\n\nAuthored several inspiring books like Wings of Fire and Ignited Minds\n\nReceived the Bharat Ratna, India’s highest civilian award\n\nStep 3: Generate a Well-Formatted Email Response\nThe response should be formatted using proper HTML tags for professional email formatting. Use <b> for bold text, <p> for paragraphs, and <ul><li> for bullet points.\n\nExample Email Response:\n\n<p>Dear [Sender's Name],</p>  \n\n<p>Thank you for reaching out! Below are the details regarding <b>Narendra Modi</b>, a globally recognized leader and visionary.</p>  \n\n<b>Identified Hero:</b>  \n<p>Narendra Modi</p>  \n\n<b>Birth Details:</b>  \n<ul>  \n<li><b>Date of Birth:</b> September 17, 1950</li>  \n<li><b>Place of Birth:</b> Vadnagar, Mehsana district, Gujarat, India</li>  \n</ul>  \n\n<b>Career Highlights:</b>  \n<ul>  \n<li><b>Prime Minister of India:</b> First elected in May 2014; re-elected in 2019.</li>  \n<li><b>Economic Reforms:</b> Introduced Goods and Services Tax (GST) and launched Make in India to boost manufacturing.</li>  \n<li><b>Digital India Campaign:</b> Focused on improving digital infrastructure and online governance.</li>  \n</ul>  \n\n<b>Important Milestones:</b>  \n<ul>  \n<li>Led India’s successful COVID-19 vaccination drive, delivering over 2 billion doses.</li>  \n<li>Spearheaded global climate change initiatives like International Solar Alliance.</li>  \n<li>Introduced bold policy changes like Demonetization in 2016 to curb black money.</li>  \n</ul>  \n\n<p>Narendra Modi's leadership has transformed India on a global scale, making it a leader in digitalization, economy, and governance. His vision continues to inspire millions.</p>  \n\n<p>Wishing you a wonderful day!</p>  \n\n<p><b>Best regards,</b><br> Laxmi's Personal AI assistant</p>"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        220,
+        0
+      ],
+      "id": "bcaa129f-5ebf-457f-b444-e6ffe9cd38c4",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        60,
+        260
+      ],
+      "id": "3c92677c-6979-499d-917a-971b2c243b7d",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Fv2D2skfKVsJl11e",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        380,
+        220
+      ],
+      "id": "6c988518-ea60-4998-ae7e-24541be1d8c4",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "eZaOxKhClmvab3UN",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toRecipients": "={{ $('Microsoft Outlook Trigger').item.json.from.emailAddress.address }}",
+        "subject": "=Answer - {{ $('Microsoft Outlook Trigger').item.json.subject }}",
+        "bodyContent": "={{ $json.output }}",
+        "additionalFields": {
+          "bodyContentType": "html"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        580,
+        -180
+      ],
+      "id": "2a833ae9-e662-45d0-85c9-d52bf1b19029",
+      "name": "Microsoft Outlook",
+      "webhookId": "f4337aa0-9ec9-4b28-936d-3b1954398984",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "7kfpOgWsjL2bGlzq",
+          "name": "Microsoft Outlook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "1"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        240,
+        260
+      ],
+      "id": "3261c808-0790-4ce7-a101-cd53da15463c",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Microsoft Outlook Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Microsoft Outlook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "666e97dd-c2ce-4e96-937a-183cdf36ce88",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4dc3f44ee6fbed0d6e14191cc8513e1df46551dbe295f3af6da1c10ffa9d03ea"
+  },
+  "id": "nxQuTKrYaxH8rLZY",
+  "tags": []
+}
