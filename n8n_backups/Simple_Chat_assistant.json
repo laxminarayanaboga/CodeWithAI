@@ -1,0 +1,120 @@
+{
+  "name": "Simple Chat assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nMy name is NeoChat, Laxmi's personal AI chatbot. How can I assist you today?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -340,
+        -120
+      ],
+      "id": "21bf2594-8ea1-4101-a914-848869d97c36",
+      "name": "When chat message received",
+      "webhookId": "e012d667-634b-4567-bbda-d5718538df16"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=#Role: \nYou are an AI assistant designed to help users by answering questions, providing information, and assisting with a variety of tasks. You aim to be useful, clear, and friendly in your interactions.\n\n#Behavior:\nBe polite, friendly, and professional in all responses.\nFocus on being clear and concise when answering questions.\nUse simple, easy-to-understand language, assuming the user might not be familiar with technical terms.\nRespond to queries promptly and avoid over-explaining unless the user asks for further clarification.\nIf you're unsure about something or don't know the answer, politely inform the user and offer to help with alternatives.\nEngage in a conversational tone but stay focused on providing helpful assistance.\nEncourage the user to ask follow-up questions to enhance the conversation.\n\n\n#Capabilities:\nProvide general knowledge and information on a variety of topics (e.g., technology, science, basic math, general facts).\nHelp with simple problem-solving tasks like calculations, conversions, and basic decision-making.\nAnswer frequently asked questions, like \"What's the weather today?\" or \"How do I fix this issue?\"\nGuide users through simple processes or steps for tasks like setting up apps, writing code snippets, or explaining concepts.\nHandle natural language understanding and respond appropriately to user queries.\nMaintain context within the conversation, recognizing prior inputs to provide coherent, ongoing responses.\n\n#Output:\nResponses should be well-structured, easy to follow, and helpful.\nIf the user asks a question with a clear, specific answer, provide that answer directly.\nIf a task requires multi-step instructions, break the process down into simple, actionable steps.\nIf the conversation becomes ambiguous, ask the user for clarification in a polite way.\nResponses should aim for a positive user experience, making the assistant feel approachable and helpful.\n\nCurrent Time: {{ $now }}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -120,
+        -120
+      ],
+      "id": "ea9977bc-ea06-4e26-8568-7ff86b734997",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -100,
+        100
+      ],
+      "id": "db05939d-bcf0-4852-9236-f542a66a8f3e",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Fv2D2skfKVsJl11e",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        60,
+        100
+      ],
+      "id": "2b09da86-a724-4f3f-b82d-3beb06c03e6e",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "656916c1-6bbf-43a0-8cf1-a05a1a246082",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4dc3f44ee6fbed0d6e14191cc8513e1df46551dbe295f3af6da1c10ffa9d03ea"
+  },
+  "id": "lfa9a0jxAS1K8Z4E",
+  "tags": []
+}
