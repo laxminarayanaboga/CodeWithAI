@@ -1,0 +1,376 @@
+{
+  "name": "CodeWith_v2",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('When clicking ‘Test workflow’').item.json.req }}\n\nThe layout should be simple and clean with basic styling. Additionally, include basic JavaScript to handle form submission.\n\nProvide the following files:\n1. HTML file (`index.html`)\n2. CSS file (`style.css`)\n3. JavaScript file (`script.js`)\n\nThe layout should be responsive and look good on both desktop and mobile devices.\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        660,
+        -80
+      ],
+      "id": "86c66080-ec21-4e27-aea1-338bf74431d8",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        688,
+        140
+      ],
+      "id": "0ee5f923-6627-4b82-9cbe-66a49197ffe2",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Fv2D2skfKVsJl11e",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -80
+      ],
+      "id": "d9024fb6-770b-4cc0-9f7d-707d026fc913",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "laxminarayanaboga",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "CodeWithAI",
+          "mode": "list",
+          "cachedResultName": "CodeWithAI",
+          "cachedResultUrl": "https://github.com/laxminarayanaboga/CodeWithAI"
+        },
+        "filePath": "={{ $('When clicking ‘Test workflow’').item.json.project }}/style.css",
+        "fileContent": "={{ $json.css }}",
+        "commitMessage": "={{ $('When clicking ‘Test workflow’').item.json.project }}",
+        "additionalParameters": {
+          "branch": {
+            "branch": "={{ $('When clicking ‘Test workflow’').item.json.project }}"
+          }
+        }
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [
+        1256,
+        -80
+      ],
+      "id": "96b9181d-3a80-4a8f-b15a-7812d32aa705",
+      "name": "GitHub CSS",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "rslCDnw5L7dpO1sg",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "laxminarayanaboga",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "CodeWithAI",
+          "mode": "list",
+          "cachedResultName": "CodeWithAI",
+          "cachedResultUrl": "https://github.com/laxminarayanaboga/CodeWithAI"
+        },
+        "filePath": "={{ $('When clicking ‘Test workflow’').item.json.project }}/script.js",
+        "fileContent": "={{ $json.js }}",
+        "commitMessage": "={{ $('When clicking ‘Test workflow’').item.json.project }}",
+        "additionalParameters": {
+          "branch": {
+            "branch": "={{ $('When clicking ‘Test workflow’').item.json.project }}"
+          }
+        }
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [
+        1256,
+        -280
+      ],
+      "id": "7995f4c9-16fe-4c17-b3e5-13fabe0f5531",
+      "name": "GitHub js",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "rslCDnw5L7dpO1sg",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Assuming the response is in 'output' as you showed above\nconst aiResponse = $json[\"output\"];\n\n// Regular expressions to extract the code blocks for HTML, CSS, and JS\nconst htmlMatch = aiResponse.match(/```html([\\s\\S]*?)```/);\nconst cssMatch = aiResponse.match(/```css([\\s\\S]*?)```/);\nconst jsMatch = aiResponse.match(/```javascript([\\s\\S]*?)```/);\n\n// const htmlMatch = aiResponse.match(/```html([\\s\\S]*?)```/);\n// const cssMatch = aiResponse.match(/```css([\\s\\S]*?)```/);\n// const jsMatch = aiResponse.match(/```javascript([\\s\\S]*?)```/);\n\n// Prepare the result\nreturn {\n  html: htmlMatch ? htmlMatch[1].trim() : '',\n  css: cssMatch ? cssMatch[1].trim() : '',\n  js: jsMatch ? jsMatch[1].trim() : ''\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1036,
+        -80
+      ],
+      "id": "ca749437-0074-4597-b596-c67c35cc95b6",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "laxminarayanaboga",
+          "mode": "name"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "CodeWithAI",
+          "mode": "list",
+          "cachedResultName": "CodeWithAI",
+          "cachedResultUrl": "https://github.com/laxminarayanaboga/CodeWithAI"
+        },
+        "filePath": "={{ $('When clicking ‘Test workflow’').item.json.project }}/index.html",
+        "fileContent": "={{ $json.html }}",
+        "commitMessage": "={{ $('When clicking ‘Test workflow’').item.json.project }}",
+        "additionalParameters": {
+          "branch": {
+            "branch": "={{ $('When clicking ‘Test workflow’').item.json.project }}"
+          }
+        }
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [
+        1256,
+        120
+      ],
+      "id": "22001c17-220d-4bd7-9bd8-8fed94bba954",
+      "name": "GitHub-html",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "rslCDnw5L7dpO1sg",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.github.com/repos/laxminarayanaboga/CodeWithAI/git/ref/heads/main",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github.v3+json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer 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"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        -80
+      ],
+      "id": "8e613ad4-0881-4d3d-93c0-4dc40e15c219",
+      "name": "HTTP Request - get main"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.github.com/repos/laxminarayanaboga/CodeWithAI/git/refs",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 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"
+            },
+            {
+              "name": "Accept",
+              "value": "application/vnd.github.v3+json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"ref\": \"refs/heads/{{ $('When clicking ‘Test workflow’').first().json.project }}\",\n  \"sha\": \"{{ $json[\"object\"][\"sha\"] }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        -80
+      ],
+      "id": "ac8c544b-9533-4b50-b703-5ce8cee9004e",
+      "name": "HTTP Request - Create branch"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "1"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        808,
+        140
+      ],
+      "id": "95e9bf9e-4298-49b2-9933-4326c3494877",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {
+    "When clicking ‘Test workflow’": [
+      {
+        "json": {
+          "req": "Generate the code for a responsive contact form web page with a professional design. The contact form should include the following fields with proper validation: \n\n- First Name (text input, required, minimum 2 characters, maximum 50 characters, no numbers or special characters)\n- Last Name (text input, required, minimum 2 characters, maximum 50 characters, no numbers or special characters)\n- Email (email input, required, must be a valid email format)\n- Phone Number (text input, required, must be a valid international phone number format)\n- Date of Birth (date input, required, must be at least 18 years old)\n- About Myself (textarea, optional, maximum 500 characters)\n- City (text input, required, minimum 2 characters, maximum 100 characters)\n- Country (select input, required, list all countries in the world)\n- Submit Button (should be disabled until all required fields are valid)\n\nThe page should include:\n\n- A modern and professional design with a full-screen background image.\n- A centered form with a white, semi-transparent background and subtle box shadow.\n- CSS styling to ensure a clean and attractive layout, including hover and focus effects.\n- JavaScript validation for real-time feedback before form submission.\n- Responsive design for mobile and desktop devices.\n\nEnsure that the generated HTML, CSS, and JavaScript follow best practices for accessibility, responsiveness, and usability.",
+          "project": "v11_3_ai"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request - get main",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GitHub CSS": {
+      "main": [
+        []
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "GitHub-html",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "GitHub CSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "GitHub js",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request - get main": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request - Create branch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request - Create branch": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "af1f833a-5a0b-4340-8570-7f6bd603c058",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4dc3f44ee6fbed0d6e14191cc8513e1df46551dbe295f3af6da1c10ffa9d03ea"
+  },
+  "id": "97UYH8sfxWovkO9H",
+  "tags": []
+}
