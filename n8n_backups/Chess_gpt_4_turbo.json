@@ -1,0 +1,160 @@
+{
+  "name": "Chess-gpt-4-turbo",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f3e40483-08e1-4229-a3d7-2df8969a573c",
+      "name": "When chat message received",
+      "webhookId": "1a02d759-059b-4d82-be23-b59bd1ac7fcc"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=#Role\n\nYou are a 1500-rated chess AI. \n\n\nYou will play as either White or Black, based on the user's input at the start. \n\n# Instructions\n- You must follow standard chess rules. Always return a legal move in algebraic notation. Do not generate invalid moves.\n- In first starts, you will receive the game setup, whether you play white or black. And their first move if you are playing black.\n- Respond only with your next move. Unless asked otherwise, respond only with your next move.\n- You will track the game history internally and respond with the best move in algebraic notation. \n- At the end of the game, send a summary via email using chess_game_summary_email tool."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        220,
+        0
+      ],
+      "id": "5f8beca9-c2b2-41db-bedd-9aaa47d3b71f",
+      "name": "chess_player"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4-turbo",
+          "mode": "list",
+          "cachedResultName": "gpt-4-turbo"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        260,
+        220
+      ],
+      "id": "601e83ac-5d25-4a7f-8fd4-320e26102a15",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Fv2D2skfKVsJl11e",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 50
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        300,
+        500
+      ],
+      "id": "f39d7465-a0b2-4f4f-8a12-a2eaabc95572",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Use this chess_game_summary_email tool to send Chess game summary at the end of the game. \n\n# Instruction:\nSpecify the game start date, time \nInclude Number of moves, white/black, moves history.\n\n# Examples:\n\n<example>\nHi,\n\nWe won. Here is a quick summary of the game.\n\n- The games stared at 29 Mar 2025 1.30 pm\n- Played white\n- Total 24 moves\n- Moves: e4 e5, Nf3 Nc6, Bb5 a6, Ba4 Nf6, O-O Be7, Re1 b5, Bb3 d6, c3 O-O, h3 Nb8, d4 Nbd7, Nbd2 c5, dxe5 dxe5, Nf1 Qc7, Ng3 c4, Bc2 Nc5, Qe2 Be6, Be3 Rfd8, Rad1 Rxd1, Rxd1 Rd8, Rxd8+ Bxd8, Bxc5 Qxc5, Qd2 Bb6, Kf1 h6, Nf5 Kh7, \n\nThanks,\nLaxmi's personal chess agent\n\n</example>\n\n\n\n<example>\nHi,\n\nWe Lost. Here is a quick summary of the game.\n\n- The games stared at 06 Jul 2025 9.30 am\n- Played white\n- Total 28 moves\n- Moves: e4 e5, Nf3 Nc6, Bb5 a6, Bxc6 dxc6, O-O Bd6, d3 h6, Be3 Bg4, h3 Bh5, Nbd2 Nf6, c3 O-O, Qc2 Qe7, d4 Rad8, dxe5 Bxe5, Nxe5 Qxe5, f4 Qe7, Rae1 Rfe8, e5 Nd5, Bd4 c5, Bf2 Nxf4, Re4 g5, h4 Bg6, Rfe1 Nd3, R1e3 Nxe5, hxg5 Bxe4, Rxe4 Qxg5, Be3 Qg3, Bf4 Nf3+, Kh1 Qh4#\n\nThanks,\nLaxmi's personal chess agent\n\n</example>\n\n<example>\nHi,\n\nWe won. Here is a quick summary of the game.\n\n- The games stared at 01 Jan 2023 11.30 pm\n- Played Black\n- Total 26 moves\n- Moves: e4 e5, 2. Nf3 Nc6, 3. Bb5 a6, 4. Bxc6 dxc6, 5. O-O Bd6, 6. d3 h6, 7. Be3 Bg4, 8. h3 Bh5, 9. Nbd2 Nf6, 10. c3 O-O, 11. Qc2 Qe7, 12. d4 Rad8, 13. dxe5 Bxe5, 14. Nxe5 Qxe5, 15. f4 Qe7, 16. Rae1 Rfe8, 17. e5 Nd5, 18. Bd4 c5, 19. Bf2 Nxf4, 20. Re4 g5, 21. h4 Bg6, 22. Rxe4 Nxe4, 23. Qxe4 Bxe4, 24. Nxe4 Ne2+, 25. Kh1 Qxe5, 26. Bxc5 Qxe4, 27. Re1 Qxh4#\n\nThanks,\nLaxmi's personal chess agent\n\n</example>\n\n\n<example>\nHi,\n\nMatch draw. Here is a quick summary of the game.\n\n- The games stared at 10 Jan 2023 11.30 pm\n- Played Black\n- Total 57 moves\n- Moves: e4 e5, 2. Nf3 Nc6, 3. Bb5 a6, 4. Ba4 Nf6, 5. O-O Be7, 6. Re1 b5, 7. Bb3 d6, 8. c3 O-O, 9. h3 Nb8, 10. d4 Nbd7, 11. Nbd2 c5, 12. dxe5 dxe5, 13. Nf1 Qc7, 14. Ng3 c4, 15. Bc2 Nc5, 16. Qe2 Be6, 17. Be3 Rfd8, 18. Rad1 Rxd1, 19. Rxd1 Rd8, 20. Rxd8+ Bxd8, 21. Bxc5 Qxc5, 22. Qd2 Bb6, 23. Kf1 h6, 24. Nf5 Kh7, 25. Ne3 g6, 26. Nd5 Bxd5, 27. exd5 Qd6, 28. Be4 f5, 29. Bc2 Kg7, 30. a4 Kf6, 31. b3 e4, 32. bxc4 bxc4, 33. Qd1 Qe5, 34. Qd2 g5, 35. Bd1 Qd6, 36. Qe2 Qe5, 37. Qxc4 Qxd5, 38. Qe2 Qd3, 39. Qxd3 exd3, 40. Ke1 Ba5, 41. Kd2 Ke5, 42. Kxd3 f4, 43. Bf3 Bb6, 44. Kc4 a5, 45. Kb5 Bd8, 46. c4 Kd4, 47. c5 Kc3, 48. Bd5 Kb4, 49. Kc6 Kxa4, 50. Kd7 Kb5, 51. c6 Kb6, 52. Kxd8 a4, 53. Kc8 Kc5, 54. Kb7 Kd6, 55. c7 Kxd5, 56. c8=Q Kd4, 57. Qc2, Draw (Stalemate)\n\nThanks,\nLaxmi's personal chess agent\n\n</example>",
+        "toRecipients": "i.bogalaxmi@gmail.com",
+        "subject": "=Chess game",
+        "bodyContent": "={{ $fromAI('matchSummaryEmail', 'Match summary email') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlookTool",
+      "typeVersion": 2,
+      "position": [
+        380,
+        220
+      ],
+      "id": "d08c0813-1643-4dd7-83da-e9698304ec1d",
+      "name": "chess_game_summary_email",
+      "webhookId": "85a50d7a-c49a-4c5a-8e72-2ce8c007eb63",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "7kfpOgWsjL2bGlzq",
+          "name": "Microsoft Outlook account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "chess_player",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "chess_player",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "chess_player",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "chess_player": {
+      "main": [
+        []
+      ]
+    },
+    "chess_game_summary_email": {
+      "ai_tool": [
+        [
+          {
+            "node": "chess_player",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2cc53906-1439-47ee-a5d9-6c2f52429b9d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4dc3f44ee6fbed0d6e14191cc8513e1df46551dbe295f3af6da1c10ffa9d03ea"
+  },
+  "id": "3R62CCk7HuuiEBOO",
+  "tags": []
+}

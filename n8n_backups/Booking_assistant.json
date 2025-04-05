@@ -1,0 +1,201 @@
+{
+  "name": "Booking assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7277e64c-293c-43f5-bf5b-30d06885818b",
+      "name": "When chat message received",
+      "webhookId": "4798c199-b4ea-49cd-b612-c3fe291ffc45"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        200,
+        240
+      ],
+      "id": "c7b62ecd-bb80-44fc-9bc1-a3538b880ef0",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "Fv2D2skfKVsJl11e",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        340,
+        400
+      ],
+      "id": "54f768b3-6ea2-421b-a130-426ad10987b3",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Use the check_calendar_availability tool to fetch existing appointments for a specified period and determine when there are available time slots that can accommodate a new appointment.\n\nInstructions:\nSpecify the Date and Range:\n\nTo fetch events for a specific day, set the eventsAfter time to 8:59 AM and the eventsBefore time to 6:01 PM of the same day (adjust these times if needed). This will capture all events within a day, ensuring a comprehensive check for available slots.\n\nExample:\n\neventsAfter: \"2025-03-29T08:59:00Z\"\n\neventsBefore: \"2025-03-29T18:01:00Z\"\n\nRetrieve Existing Appointments:\n\nThe tool will return all booked appointments within the specified date and time range. The response will include the start and end times of each appointment.\n\nCalculate Available Slots:\n\nOnce the tool returns existing appointments, calculate the gaps between them to identify available time slots.\n\nEnsure that the gap between two appointments is large enough to accommodate the required appointment length (e.g., 1 hour).\n\nEnsure no overlap with existing appointments. If there is an existing appointment from 10:00 AM to 11:00 AM, a new appointment cannot be scheduled during that time or overlap with it.\n\nOutput Availability:\n\nIf there are no existing appointments for the given range (i.e., the response array is empty), this means there are available time slots for the day.\n\nIf the response includes events, list the available time gaps between those appointments where a new appointment could fit.\n\nKey Considerations:\nAlways account for the full length of the required appointment when calculating available time slots. For example, if a 1-hour appointment is required, check for gaps of at least 1 hour between events.\n\nIf no availability is found (either because all time slots are booked or gaps are too short), prompt the user for an alternative date or time.\n\nClarification of Potential Issues to Watch Out For:\nEmpty Response Handling:\n\nIf the tool returns an empty array ([]), this indicates there are no events booked for that day, meaning available slots exist (entire day is available).\n\nEnsure your system handles this case by offering available slots to the user, as no appointments were found.\n\nAdjusting Time Range:\n\nYou can adjust the eventsAfter and eventsBefore times if the business hours differ (e.g., if your salon is open from 10 AM to 6 PM). Ensure this is set according to the actual operating hours.\n\nGap Calculation:\n\nWhen calculating available slots, ensure that your system only considers gaps that are at least as long as the required appointment time (usually 1 hour). For example, if there’s a gap between 11:30 AM and 12:30 PM, a 1-hour appointment could be booked during this time.\n\n\n\nExamples:\n\n<example>\nInput (User Request): Check availability for March 29, 2025, between 8:59 AM and 6:01 PM.\n\nOutput (Tool Response):\n[\n  {\n    \"start\": \"2025-03-29T09:00:00Z\",\n    \"end\": \"2025-03-29T10:00:00Z\"\n  },\n  {\n    \"start\": \"2025-03-29T11:30:00Z\",\n    \"end\": \"2025-03-29T12:30:00Z\"\n  },\n  {\n    \"start\": \"2025-03-29T14:00:00Z\",\n    \"end\": \"2025-03-29T15:00:00Z\"\n  }\n]\nOutput (Available Slots):\nAvailable time slots on March 29, 2025:\n10:00 AM - 11:00 AM\n12:30 PM - 1:30 PM\n3:00 PM - 4:00 PM\n4:00 PM - 5:00 PM\n5:00 PM - 6:00 PM\n</example>\n\n\n<example>\nInput (User Request): Check availability for October 21, 2025, between 8:59 AM and 6:01 PM.\n\nOutput (Tool Response):\n[]\nOutput (Available Slots):\nAvailable time slots on March 29, 2025:\n0:00 AM - 10:00 AM\n10:00 AM - 11:00 AM\n11:00 AM - 12:00 PM  \n12:00 PM - 1:00 PM\n1:00 PM - 2:00 PM\n3:00 PM - 4:00 PM\n4:00 PM - 5:00 PM\n5:00 PM - 6:00 PM\n</example>\n",
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "i.bogalaxmi@gmail.com",
+          "mode": "list",
+          "cachedResultName": "i.bogalaxmi@gmail.com"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $fromAI('eventsAfter', 'Return events after this date time, use 2025-03-27T22:31:24.021+00:00 format') }}",
+        "timeMax": "={{ $fromAI('eventsBefore', 'Return events before this date time, use 2025-03-27T22:31:24.021+00:00 format') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        460,
+        220
+      ],
+      "id": "e81d56fe-880b-4751-bdaa-0221de4b8197",
+      "name": "check_calendar_availability",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "bWx9TDkc4tsvsmbE",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "=Use this create_calendar_appointment tool to create appointment (event) for the specified period. \n\n# Instructions: \n\nSpecify the Date and Time – Create new event for the specific time slot.  \n\nAdd user's full name in eventsSummary\nInclude the user's full name and email in the appointment (event) description (eventsDescription)\n\nBy following these steps, you can crate the valid appointment (events).  \n\n ",
+        "calendar": {
+          "__rl": true,
+          "value": "i.bogalaxmi@gmail.com",
+          "mode": "list",
+          "cachedResultName": "i.bogalaxmi@gmail.com"
+        },
+        "start": "={{ $fromAI('eventsStart', 'new appointment start date time, use 2025-03-27T22:31:24.021+00:00 format') }}",
+        "end": "={{ $fromAI('eventsEnd', 'new appointment end date time, use 2025-03-27T22:31:24.021+00:00 format') }}",
+        "additionalFields": {
+          "description": "={{ $fromAI('eventsDescription', 'new appointment description') }}",
+          "summary": "={{ $fromAI('eventsSummary', 'new appointment summary') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        680,
+        380
+      ],
+      "id": "a687b78c-e55f-4f6f-aeb4-d04c655d4d33",
+      "name": "create_calendar_appointment",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "bWx9TDkc4tsvsmbE",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Role \n\nYou are a scheduling assistant working for a beauty salon. Your role is to help customers schedule an appointment in the beauty salon's calendar.  \n\n# Instructions \n\nFollow the following steps to book an appointment for the user: \n1. Ask the user for their preferred appointment day. \n2. Use the check_calendar_availability tool to identify booked time slots for the user-specified day. If the response is empty (`[]`), that means there are no events on that day and therefore available slots.\n3. Show the user available time slots for their preferred day and get from user the time slot they would like to book an appointment for. Each booking is strictly for 1 hour only. If there are no available time slots for that day (i.e., the tool response contains booked events), start from step 1 again and ask the user for a new day preference.\n4. Ask the user for the information you require to book the calendar appointment. In order to book the appointment, you need the user's full name and email. \n5. Use the create_calendar_appointment tool to book the appointment for the user, using details captured from step 4.\n6. Once the appointment is booked, notify the user with relevant details for their appointment. Notify the user if it was not possible to create the appointment. \n\n# Rules\n1. Always use London timezone when using tools or their outputs.  \n2. Don't make things up, ask the user a clarifying question if you need additional information to complete your task. If you're asked a question to which you don't know the answer, say so. \n\n# Examples \nUse the following examples when notifying the user that you have successfully booked their appointment:\n\n<example> \nI have successfully booked your appointment, here are the details:  \n**Date & Time** 15:30 on Wednesday, 15 March 2025 \n**Email for booking**: jane@doe.com \nIf you need to cancel your appointment, please call +447508656397\n</example> \n\n<example> \nI have successfully booked your appointment, here are the details:  \n**Date & Time**: 9:45 on Friday, 22 April, 2025  \n**Email for booking**: I.bogalaxmi@n8n.io  \nIf you need to cancel your appointment, please call +447508656397\n</example> \n\n# Additional Context \nThe date and time right now is {{ $now }} \nThe beauty salon is called Bease Blowouts Berlin \nThe Beauty salon's phone number is +447508656397\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        312,
+        0
+      ],
+      "id": "29b79256-50a0-41d1-830e-dd6cf34a7f9b",
+      "name": "Booking Agent"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Booking Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Booking Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Booking Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check_calendar_availability": {
+      "ai_tool": [
+        [
+          {
+            "node": "Booking Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create_calendar_appointment": {
+      "ai_tool": [
+        [
+          {
+            "node": "Booking Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3b2c159b-23ae-40f1-bb0b-6393418e0e8d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4dc3f44ee6fbed0d6e14191cc8513e1df46551dbe295f3af6da1c10ffa9d03ea"
+  },
+  "id": "AK9oygofhut0BGAB",
+  "tags": []
+}
